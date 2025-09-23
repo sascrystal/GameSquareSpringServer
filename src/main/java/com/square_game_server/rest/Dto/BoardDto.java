@@ -1,5 +1,6 @@
 package com.square_game_server.rest.Dto;
 
+import com.square_game_server.domain.Board;
 import com.square_game_server.domain.Cell;
 import com.square_game_server.domain.Side;
 import lombok.AllArgsConstructor;
@@ -8,32 +9,40 @@ import lombok.Data;
 @Data
 @AllArgsConstructor
 public class BoardDto {
-    private String board;
+    private int size;
+    private String data;
+    private String nextPlayerColor;
 
-    public static Cell[][] boardDtoToDomainObject(String board, int size){
-        Cell[][] domainObject = new Cell[size][size];
+    public static Board boardDtoToDomainObject(BoardDto boardDto){
+        Cell[][] data = new Cell[boardDto.getSize()][boardDto.getSize()];
         int z = 0;
-        for(int i = 0; i < size; i++){
-            for(int j = 0; j < size; j++){
-                switch (board.charAt(z)){
+        for(int i = 0; i < data.length; i++){
+            for(int j = 0; j < data[i].length; j++){
+                switch (boardDto.getData().charAt(z)){
                     case 'b':
-                        domainObject[i][j] = new Cell(Side.BLACK);
+                        data[i][j] = new Cell(Side.BLACK);
                         break;
                         case 'w':
-                            domainObject[i][j] = new Cell(Side.WHITE);
+                            data[i][j] = new Cell(Side.WHITE);
                             break;
                             case ' ':
-                                domainObject[i][j] = new Cell();
+                                data[i][j] = new Cell();
                                 break;
                 }
                 z++;
             }
         }
-        return domainObject;
+        Side side;
+        if (boardDto.getNextPlayerColor().equals("w")) {
+            side = Side.WHITE;
+        } else {
+            side = Side.BLACK;
+        }
+        return new Board(data, side);
     }
-    public static String domainObjectToBoardDto(Cell[][] domainObject){
+    public static BoardDto domainObjectToBoardDto(Board domainObject){
         StringBuilder stringBuilder = new StringBuilder();
-        for (Cell[] cells : domainObject) {
+        for (Cell[] cells : domainObject.getData()) {
             for (Cell cell : cells) {
                 switch (cell.getSide()){
                     case BLACK:
@@ -49,7 +58,14 @@ public class BoardDto {
 
             }
         }
-        return stringBuilder.toString();
+        String nextPlayerColor;
+        if(domainObject.getNextPlayerColor() == Side.WHITE){
+            nextPlayerColor = "w";
+        }else {
+            nextPlayerColor = "b";
+        }
+
+        return new BoardDto(domainObject.getData().length, stringBuilder.toString(), nextPlayerColor);
     }
 
 
