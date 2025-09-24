@@ -5,13 +5,84 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Шахматная доска с серверным взаимодействием</title>
     <style>
+
+        .win-line {
+            position: absolute;
+            background-color: #ff0000;
+            transform-origin: 0 0;
+            z-index: 10;
+            pointer-events: none;
+        }
+
+        .win-message {
+            font-size: 1.5rem;
+            font-weight: bold;
+            text-align: center;
+            margin: 10px 0;
+            padding: 10px;
+            border-radius: 5px;
+            animation: pulse 1.5s infinite;
+        }
+
+        .win-message.white {
+            background-color: rgba(255, 255, 255, 0.3);
+            color: #fff;
+            text-shadow: 0 0 5px #000;
+        }
+
+        .win-message.black {
+            background-color: rgba(0, 0, 0, 0.5);
+            color: #fff;
+        }
+
+        .win-message.draw {
+            background-color: rgba(255, 165, 0, 0.5);
+            color: #fff;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
+        .win-highlight {
+            box-shadow: 0 0 0 3px #ff0000, inset 0 0 0 3px #ff0000;
+            z-index: 5;
+            animation: highlight-pulse 1.5s infinite;
+        }
+
+        @keyframes highlight-pulse {
+            0% { box-shadow: 0 0 0 3px #ff0000, inset 0 0 0 3px #ff0000; }
+            50% { box-shadow: 0 0 0 5px #ff0000, inset 0 0 0 5px #ff0000; }
+            100% { box-shadow: 0 0 0 3px #ff0000, inset 0 0 0 3px #ff0000; }
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
+        .win-highlight {
+            box-shadow: 0 0 0 3px #ff0000, inset 0 0 0 3px #ff0000;
+            z-index: 5;
+            animation: highlight-pulse 1.5s infinite;
+        }
+
+        @keyframes highlight-pulse {
+            0% { box-shadow: 0 0 0 3px #ff0000, inset 0 0 0 3px #ff0000; }
+            50% { box-shadow: 0 0 0 5px #ff0000, inset 0 0 0 5px #ff0000; }
+            100% { box-shadow: 0 0 0 3px #ff0000, inset 0 0 0 3px #ff0000; }
+        }
+
         * {
             box-sizing: border-box;
             margin: 0;
             padding: 0;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
-        
+
         body {
             background: linear-gradient(135deg, #1a2a6c, #b21f1f, #fdbb2d);
             min-height: 100vh;
@@ -21,7 +92,7 @@
             padding: 20px;
             color: white;
         }
-        
+
         .container {
             max-width: 1200px;
             width: 100%;
@@ -31,18 +102,18 @@
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
             margin-top: 20px;
         }
-        
+
         header {
             text-align: center;
             margin-bottom: 20px;
         }
-        
+
         h1 {
             font-size: 2.5rem;
             margin-bottom: 10px;
             text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
         }
-        
+
         .controls {
             display: flex;
             justify-content: center;
@@ -50,7 +121,7 @@
             margin-bottom: 20px;
             flex-wrap: wrap;
         }
-        
+
         button {
             background: linear-gradient(to right, #3498db, #2ecc71);
             border: none;
@@ -62,23 +133,23 @@
             transition: all 0.3s ease;
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
         }
-        
+
         button:hover {
             transform: translateY(-2px);
             box-shadow: 0 6px 8px rgba(0, 0, 0, 0.2);
         }
-        
+
         button:active {
             transform: translateY(0);
         }
-        
+
         button:disabled {
             background: #7f8c8d;
             cursor: not-allowed;
             transform: none;
             box-shadow: none;
         }
-        
+
         .size-controls {
             display: flex;
             align-items: center;
@@ -87,7 +158,7 @@
             padding: 10px;
             border-radius: 10px;
         }
-        
+
         input[type="number"] {
             width: 70px;
             padding: 8px;
@@ -96,7 +167,7 @@
             text-align: center;
             font-size: 1rem;
         }
-        
+
         .board-container {
             display: flex;
             justify-content: center;
@@ -106,14 +177,14 @@
             background-color: rgba(0, 0, 0, 0.3);
             border-radius: 10px;
         }
-        
+
         .board {
             display: grid;
             gap: 0;
             border: 3px solid #8B4513;
             box-shadow: 0 0 20px rgba(0, 0, 0, 0.7);
         }
-        
+
         .cell {
             width: 50px;
             height: 50px;
@@ -124,28 +195,28 @@
             cursor: pointer;
             transition: background-color 0.2s;
         }
-        
+
         .cell.light {
             background-color: #f0d9b5;
         }
-        
+
         .cell.dark {
             background-color: #b58863;
         }
-        
+
         .cell:hover:not(.disabled) {
             filter: brightness(1.1);
         }
-        
+
         .cell.disabled {
             cursor: not-allowed;
             opacity: 0.7;
         }
-        
+
         .cell.highlight {
             box-shadow: inset 0 0 0 3px #ffeb3b;
         }
-        
+
         .piece {
             width: 40px;
             height: 40px;
@@ -153,27 +224,27 @@
             box-shadow: 0 3px 5px rgba(0, 0, 0, 0.5);
             transition: transform 0.2s;
         }
-        
+
         .piece.white {
             background: radial-gradient(circle at 30% 30%, #ffffff, #cccccc);
             border: 2px solid #aaaaaa;
         }
-        
+
         .piece.black {
             background: radial-gradient(circle at 30% 30%, #333333, #000000);
             border: 2px solid #222222;
         }
-        
+
         .piece.placed {
             animation: placePiece 0.3s ease-out;
         }
-        
+
         @keyframes placePiece {
             0% { transform: scale(0); }
             70% { transform: scale(1.1); }
             100% { transform: scale(1); }
         }
-        
+
         .status {
             text-align: center;
             font-size: 1.2rem;
@@ -182,42 +253,61 @@
             background-color: rgba(255, 255, 255, 0.1);
             border-radius: 10px;
         }
-        
+
         .current-player {
             display: inline-flex;
             align-items: center;
+            vertical-align: middle;
             gap: 10px;
             padding: 5px 15px;
             border-radius: 20px;
             background-color: rgba(255, 255, 255, 0.2);
         }
-        
+
         .player-indicator {
             width: 20px;
             height: 20px;
             border-radius: 50%;
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
         }
-        
+
         .server-status {
             margin-top: 10px;
             padding: 8px;
             border-radius: 5px;
             font-size: 0.9rem;
         }
-        
+
+        .status p {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .current-player {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .player-text {
+            white-space: nowrap;
+        }
+
         .server-status.connecting {
             background-color: #f39c12;
         }
-        
+
         .server-status.success {
             background-color: #2ecc71;
         }
-        
+
         .server-status.error {
             background-color: #e74c3c;
         }
-        
+
         .instructions {
             margin-top: 20px;
             background-color: rgba(255, 255, 255, 0.1);
@@ -226,34 +316,34 @@
             font-size: 0.9rem;
             line-height: 1.5;
         }
-        
+
         @media (max-width: 768px) {
             .cell {
                 width: 40px;
                 height: 40px;
             }
-            
+
             .piece {
                 width: 32px;
                 height: 32px;
             }
-            
+
             h1 {
                 font-size: 2rem;
             }
         }
-        
+
         @media (max-width: 480px) {
             .cell {
                 width: 30px;
                 height: 30px;
             }
-            
+
             .piece {
                 width: 24px;
                 height: 24px;
             }
-            
+
             .controls {
                 flex-direction: column;
                 align-items: center;
@@ -266,7 +356,7 @@
         <h1>Шахматная доска с серверным взаимодействием</h1>
         <p>Вы играете за белых, сервер играет за черных</p>
     </header>
-    
+
     <div class="container">
         <div class="controls">
             <div class="size-controls">
@@ -277,18 +367,22 @@
             <button id="resetBoard">Очистить доску</button>
             <button id="toggleNumbers">Переключить номера</button>
         </div>
-        
+
         <div class="board-container">
             <div class="board" id="chessBoard"></div>
         </div>
-        
+
         <div class="status">
-            <p>Текущий ход: <span class="current-player">
-                <span class="player-indicator white"></span>
-            </span></p>
+            <p>
+                <span>Текущий ход:</span>
+                <span class="current-player">
+            <span class="player-indicator white"></span>
+            <span class="player-text">Белые (ваш ход)</span>
+        </span>
+            </p>
             <div class="server-status" id="serverStatus"></div>
         </div>
-        
+
         <div class="instructions">
             <h3>Как использовать:</h3>
             <p>• Кликните на клетку, чтобы разместить белую фишку (ваш ход)</p>
@@ -308,24 +402,26 @@
             const toggleNumbersBtn = document.getElementById('toggleNumbers');
             const currentPlayerIndicator = document.querySelector('.current-player');
             const serverStatus = document.getElementById('serverStatus');
-            
+
+            let gameOver = false;
+            let winLines = [];
             let boardSize = 8;
             let currentPlayer = 'white'; // white или black
             let showNumbers = true;
             let boardState = []; // Массив для хранения состояния доски
             let isWaitingForServer = false;
-            
+
             // URL сервера для отправки ходов
-            const SERVER_URL = 'http://localhost:8080/api/1/nextMove'; // Заглушка для демонстрации
-            
+            const SERVER_URL = 'http://localhost:8080'; // Заглушка для демонстрации
+
             // Инициализация доски
             function initBoard() {
                 chessBoard.innerHTML = '';
                 chessBoard.style.gridTemplateColumns = `repeat(${boardSize}, 1fr)`;
-                
+
                 // Инициализация состояния доски
                 boardState = Array(boardSize).fill().map(() => Array(boardSize).fill(null));
-                
+
                 // Создаем клетки доски
                 for (let row = 0; row < boardSize; row++) {
                     for (let col = 0; col < boardSize; col++) {
@@ -333,7 +429,7 @@
                         cell.className = `cell ${(row + col) % 2 === 0 ? 'light' : 'dark'}`;
                         cell.dataset.row = row;
                         cell.dataset.col = col;
-                        
+
                         // Добавляем номера строк и столбцов, если включено
                         if (showNumbers) {
                             if (col === 0) {
@@ -347,7 +443,7 @@
                                 rowNumber.style.color = (row + col) % 2 === 0 ? '#b58863' : '#f0d9b5';
                                 cell.appendChild(rowNumber);
                             }
-                            
+
                             if (row === boardSize - 1) {
                                 const colNumber = document.createElement('span');
                                 colNumber.className = 'col-number';
@@ -360,63 +456,64 @@
                                 cell.appendChild(colNumber);
                             }
                         }
-                        
+
                         // Если в состоянии доски есть фишка, отображаем ее
                         if (boardState[row][col]) {
                             const piece = document.createElement('div');
                             piece.className = `piece ${boardState[row][col]}`;
                             cell.appendChild(piece);
                         }
-                        
+
                         cell.addEventListener('click', handleCellClick);
                         chessBoard.appendChild(cell);
                     }
                 }
-                
+
                 updatePlayerIndicator();
                 updateBoardInteractivity();
             }
-            
+
             // Обработка клика по клетке
             function handleCellClick(event) {
-                if (isWaitingForServer || currentPlayer !== 'white') return;
-                
+                if (isWaitingForServer || currentPlayer !== 'white' || gameOver) return;
+
                 const cell = event.currentTarget;
                 const row = parseInt(cell.dataset.row);
                 const col = parseInt(cell.dataset.col);
-                
+
                 // Если клетка уже занята, ничего не делаем
                 if (boardState[row][col]) {
                     return;
                 }
-                
+
                 // Размещаем белую фишку
                 placePiece(row, col, 'white');
-                
+
                 // Меняем игрока на черных
                 currentPlayer = 'black';
                 updatePlayerIndicator();
                 updateBoardInteractivity();
-                
+
                 // Отправляем ход на сервер
                 sendMoveToServer(row, col);
             }
-            
+
+
             // Размещение фишки на доске
             function placePiece(row, col, color) {
                 // Обновляем состояние доски
                 boardState[row][col] = color;
-                
+
                 // Находим клетку
                 const cell = chessBoard.querySelector(`.cell[data-row="${row}"][data-col="${col}"]`);
-                
+
                 // Создаем фишку
                 const piece = document.createElement('div');
                 piece.className = `piece ${color}`;
                 piece.addEventListener('animationend', () => {
                     piece.classList.remove('placed');
                 });
-                
+
                 // Добавляем фишку в клетку
                 cell.innerHTML = '';
                 if (showNumbers) {
@@ -432,7 +529,7 @@
                         rowNumber.style.color = (row + col) % 2 === 0 ? '#b58863' : '#f0d9b5';
                         cell.appendChild(rowNumber);
                     }
-                    
+
                     if (row === boardSize - 1) {
                         const colNumber = document.createElement('span');
                         colNumber.className = 'col-number';
@@ -446,13 +543,13 @@
                     }
                 }
                 cell.appendChild(piece);
-                
+
                 // Запускаем анимацию
                 setTimeout(() => {
                     piece.classList.add('placed');
                 }, 10);
             }
-            
+
             // Формирование строки data для boardDto
             function generateBoardDataString() {
                 let result = '';
@@ -469,109 +566,284 @@
                 }
                 return result;
             }
-            
-            // Отправка хода на сервер
-            async function sendMoveToServer(row, col) {
+
+            async function checkWin() {
+                if (gameOver) return;
+
                 isWaitingForServer = true;
-                updateServerStatus('connecting', 'Отправка хода на сервер...');
-                
-                // Формируем данные для отправки
+                updateServerStatus('connecting', 'Проверка состояния игры...');
+
                 const boardDto = {
                     size: boardSize,
-                    data: generateBoardDataString(), // строка с "b", "w" и " "
-                    nextPlayerColor: 'b'
+                    data: generateBoardDataString(),
+                    nextPlayerColor: currentPlayer === 'white' ? 'w' : 'b'
                 };
-                
+
                 try {
-                    // Отправляем POST запрос на сервер
-                    const response = await fetch(SERVER_URL, {
+                    // Отправляем GET запрос на сервер для проверки победы
+                    const response = await fetch(SERVER_URL + "/api/board/1/checkWin", {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json',
                         },
                         body: JSON.stringify(boardDto)
                     });
-                    
+
                     if (!response.ok) {
                         throw new Error(`Ошибка сервера: ${response.status}`);
                     }
-                    
-                    // Получаем ответ от сервера (в реальном приложении здесь будет ответ сервера)
-                    const serverResponse = await response.json();
-                    
-                    // Имитация ответа сервера (в реальном приложении используйте данные из ответа)
-                    updateServerStatus('success', 'Ход сервера получен');
-                    
-                    // Имитируем задержку ответа сервера
-                    setTimeout(() => {
-                        // В реальном приложении используйте данные из serverResponse
-                        // Например: const { x, y, color } = serverResponse;
-                        
-                        // Находим случайную свободную клетку для хода черных
-                        const emptyCells = [];
-                        for (let r = 0; r < boardSize; r++) {
-                            for (let c = 0; c < boardSize; c++) {
-                                if (!boardState[r][c]) {
-                                    emptyCells.push({r, c});
-                                }
-                            }
-                        }
-                        
-                        if (emptyCells.length > 0) {
-                            const randomCell = emptyCells[Math.floor(Math.random() * emptyCells.length)];
-                            
-                            // Размещаем черную фишку
-                            placePiece(randomCell.r, randomCell.c, 'black');
-                            
-                            // Меняем игрока на белых
-                            currentPlayer = 'white';
-                            updatePlayerIndicator();
-                        }
-                        
-                        isWaitingForServer = false;
-                        updateBoardInteractivity();
-                        updateServerStatus('', '');
-                    }, 1000);
-                    
-                } catch (error) {
-                    console.error('Ошибка при отправке хода:', error);
-                    updateServerStatus('error', `Ошибка: ${error.message}`);
-                    
-                    // В случае ошибки возвращаем ход белым
-                    currentPlayer = 'white';
-                    updatePlayerIndicator();
+
+                    const result = await response.text();
+
                     isWaitingForServer = false;
-                    updateBoardInteractivity();
-                    
-                    // Через 3 секунды очищаем статус
+                    updateServerStatus('', '');
+
+                    // Обрабатываем ответ сервера
+                    if (result.trim() === '') {
+                        // Игра продолжается
+                        return;
+                    } else if (result.trim() === 'd') {
+                        // Ничья
+                        showGameResult('draw');
+                    } else {
+                        // Кто-то выиграл - парсим результат
+                        const winner = result.charAt(0);
+                        const coordsString = result.substring(1).trim();
+
+                        if (winner === 'w' || winner === 'b') {
+                            const winnerColor = winner === 'w' ? 'white' : 'black';
+                            const coords = parseCoordinates(coordsString);
+                            showGameResult(winnerColor, coords);
+                        }
+                    }
+                } catch (error) {
+                    console.error('Ошибка при проверке победы:', error);
+                    updateServerStatus('error', `Ошибка: ${error.message}`);
+                    isWaitingForServer = false;
+
                     setTimeout(() => {
                         updateServerStatus('', '');
                     }, 3000);
                 }
             }
-            
+
+
+
+            // Функция для парсинга координат из строки
+            function parseCoordinates(coordsString) {
+                const coords = [];
+                // Регулярное выражение для поиска координат в формате (x; y)
+                const regex = /\((\d+);\s*(\d+)\)/g;
+                let match;
+
+                while ((match = regex.exec(coordsString)) !== null) {
+                    const x = parseInt(match[1]);
+                    const y = parseInt(match[2]);
+                    coords.push({x, y});
+                }
+
+                return coords;
+            }
+
+            // Функция для отображения результата игры
+            function showGameResult(result, coords = []) {
+                gameOver = true;
+
+                // Создаем сообщение о результате
+                const statusDiv = document.querySelector('.status');
+                let message = '';
+
+                if (result === 'white') {
+                    message = 'Белые выиграли!';
+                } else if (result === 'black') {
+                    message = 'Черные выиграли!';
+                } else {
+                    message = 'Ничья!';
+                }
+
+                const winMessage = document.createElement('div');
+                winMessage.className = `win-message ${result}`;
+                winMessage.textContent = message;
+                statusDiv.appendChild(winMessage);
+
+                // Если есть координаты выигрышной комбинации, подсвечиваем их и рисуем линии
+                if (coords.length > 0) {
+                    highlightWinningCells(coords);
+                    drawWinLines(coords);
+                }
+
+                // Блокируем доску
+                updateBoardInteractivity();
+            }
+
+            // Функция для подсветки выигрышных клеток
+            function highlightWinningCells(coords) {
+                // Сначала сбросим все предыдущие подсветки
+                const previousHighlights = document.querySelectorAll('.win-highlight');
+                previousHighlights.forEach(cell => {
+                    cell.classList.remove('win-highlight');
+                });
+
+                // Подсвечиваем все выигрышные клетки
+                coords.forEach(coord => {
+                    const cell = chessBoard.querySelector(`.cell[data-row="${coord.y}"][data-col="${coord.x}"]`);
+                    if (cell) {
+                        cell.classList.add('win-highlight');
+                    }
+                });
+            }
+
+            function drawLineBetweenCells(startCoord, endCoord) {
+                // Находим элементы клеток на доске
+                const startCell = chessBoard.querySelector(`.cell[data-row="${startCoord.y}"][data-col="${startCoord.x}"]`);
+                const endCell = chessBoard.querySelector(`.cell[data-row="${endCoord.y}"][data-col="${endCoord.x}"]`);
+
+                if (!startCell || !endCell) return;
+
+                // Получаем позиции клеток относительно доски
+                const boardRect = chessBoard.getBoundingClientRect();
+                const startCellRect = startCell.getBoundingClientRect();
+                const endCellRect = endCell.getBoundingClientRect();
+
+                // Вычисляем координаты центров клеток относительно доски
+                const startX = startCellRect.left - boardRect.left + startCellRect.width / 2;
+                const startY = startCellRect.top - boardRect.top + startCellRect.height / 2;
+                const endX = endCellRect.left - boardRect.left + endCellRect.width / 2;
+                const endY = endCellRect.top - boardRect.top + endCellRect.height / 2;
+
+                // Создаем элемент линии
+                const winLine = document.createElement('div');
+                winLine.className = 'win-line';
+
+                // Вычисляем длину и угол линии
+                const length = Math.sqrt(Math.pow(endX - startX, 2) + Math.pow(endY - startY, 2));
+                const angle = Math.atan2(endY - startY, endX - startX) * 180 / Math.PI;
+
+                // Устанавливаем стили линии
+                winLine.style.width = `${length}px`;
+                winLine.style.height = '4px';
+                winLine.style.left = `${startX}px`;
+                winLine.style.top = `${startY}px`;
+                winLine.style.transform = `rotate(${angle}deg)`;
+                winLine.style.background = 'linear-gradient(to right, #ff0000, #ff6666)';
+                winLine.style.borderRadius = '2px';
+                winLine.style.boxShadow = '0 0 5px rgba(255, 0, 0, 0.7)';
+
+                // Добавляем линию на доску
+                chessBoard.style.position = 'relative';
+                chessBoard.appendChild(winLine);
+
+                // Сохраняем ссылку на линию для последующего удаления
+                winLines.push(winLine);
+            }
+
+            // Функция для рисования линии между выигрышными фишками
+            function drawWinLines(coords) {
+                if (coords.length < 2) return;
+
+                // Удаляем предыдущие линии
+                clearWinLines();
+
+                // Рисуем линии между последовательными фишками
+                for (let i = 0; i < coords.length - 1; i++) {
+                    const startCoord = coords[i];
+                    const endCoord = coords[i + 1];
+
+                    drawLineBetweenCells(startCoord, endCoord);
+                }
+
+                // Если нужно замкнуть линию (соединить последнюю с первой)
+                if (coords.length >= 3) {
+                    drawLineBetweenCells(coords[coords.length - 1], coords[0]);
+                }
+            }
+
+
+            // Отправка хода на сервер
+            async function sendMoveToServer(row, col) {
+                isWaitingForServer = true;
+                updateServerStatus('connecting', 'Отправка хода на сервер...');
+
+                const boardDto = {
+                    size: boardSize,
+                    data: generateBoardDataString(),
+                    nextPlayerColor: 'b'
+                };
+
+                try {
+                    const response = await fetch(SERVER_URL + "/api/1/nextMove", {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify(boardDto)
+                    });
+
+                    if (!response.ok) {
+                        throw new Error(`Ошибка сервера: ${response.status}`);
+                    }
+
+                    const serverResponse = await response.json();
+                    const x = serverResponse.x;
+                    const y = serverResponse.y;
+                    let color = serverResponse.color;
+
+                    switch (color) {
+                        case "b":
+                            color = "black";
+                            break;
+                        case "w":
+                            color = "white";
+                            break;
+                    }
+
+                    placePiece(y, x, color);
+                    currentPlayer = 'white';
+                    isWaitingForServer = false;
+
+                    updatePlayerIndicator();
+                    updateBoardInteractivity();
+                    updateServerStatus('success', 'Ход сервера получен');
+
+                    // Проверяем, не закончилась ли игра
+                    checkWin();
+
+                } catch (error) {
+                    console.error('Ошибка при отправке хода:', error);
+                    updateServerStatus('error', `Ошибка: ${error.message}`);
+
+                    currentPlayer = 'white';
+                    updatePlayerIndicator();
+                    isWaitingForServer = false;
+                    updateBoardInteractivity();
+
+                    setTimeout(() => {
+                        updateServerStatus('', '');
+                    }, 3000);
+                }
+            }
             // Обновление индикатора текущего игрока
             function updatePlayerIndicator() {
                 const indicator = currentPlayerIndicator.querySelector('.player-indicator');
                 indicator.className = 'player-indicator';
                 indicator.classList.add(currentPlayer);
-                
-                const text = currentPlayerIndicator.querySelector('span:last-child');
+
+                const text = currentPlayerIndicator.querySelector('.player-text');
                 text.textContent = currentPlayer === 'white' ? 'Белые (ваш ход)' : 'Черные (ход сервера)';
             }
-            
+
             // Обновление интерактивности доски
             function updateBoardInteractivity() {
                 const cells = document.querySelectorAll('.cell');
                 cells.forEach(cell => {
-                    if (isWaitingForServer || currentPlayer !== 'white') {
+                    if (isWaitingForServer || currentPlayer !== 'white' || gameOver) {
                         cell.classList.add('disabled');
                     } else {
                         cell.classList.remove('disabled');
                     }
                 });
             }
-            
+
             // Обновление статуса сервера
             function updateServerStatus(status, message) {
                 serverStatus.className = 'server-status';
@@ -580,28 +852,53 @@
                 }
                 serverStatus.textContent = message;
             }
-            
+
             // Очистка доски
             function resetBoard() {
                 if (isWaitingForServer) return;
-                
+
                 boardState = Array(boardSize).fill().map(() => Array(boardSize).fill(null));
                 currentPlayer = 'white';
                 isWaitingForServer = false;
+                gameOver = false;
+
+                // Удаляем сообщение о победе, если есть
+                const winMessage = document.querySelector('.win-message');
+                if (winMessage) {
+                    winMessage.remove();
+                }
+
+                // Удаляем подсветку с клеток
+                const highlightedCells = document.querySelectorAll('.win-highlight');
+                highlightedCells.forEach(cell => {
+                    cell.classList.remove('win-highlight');
+                });
+
+                // Удаляем все линии победы
+                clearWinLines();
+
                 initBoard();
                 updateServerStatus('', '');
             }
-            
+            function clearWinLines() {
+                winLines.forEach(line => {
+                    if (line && line.parentNode) {
+                        line.parentNode.removeChild(line);
+                    }
+                });
+                winLines = [];
+            }
+
             // Переключение отображения номеров
             function toggleNumbers() {
                 showNumbers = !showNumbers;
                 initBoard();
             }
-            
+
             // Обработчики событий
             resizeBoardBtn.addEventListener('click', () => {
                 if (isWaitingForServer) return;
-                
+
                 const newSize = parseInt(boardSizeInput.value);
                 if (newSize >= 4 && newSize <= 20) {
                     boardSize = newSize;
@@ -610,10 +907,10 @@
                     alert('Размер доски должен быть от 4 до 20');
                 }
             });
-            
+
             resetBoardBtn.addEventListener('click', resetBoard);
             toggleNumbersBtn.addEventListener('click', toggleNumbers);
-            
+
             // Инициализация при загрузке
             initBoard();
         });

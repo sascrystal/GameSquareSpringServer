@@ -38,14 +38,29 @@ public class CellServiceImpl implements CellService {
                                 && board[i + 1 + lengthOfCube][j + 1 + lengthOfCube - positionOnCube * 2].getSide() == side
                                 && board[i + 1 + lengthOfCube - positionOnCube][j - positionOnCube].getSide() == side) {
 
+                            int[][] winningCoordinates = new int[4][2];
+                            winningCoordinates[0][0] = j;
+                            winningCoordinates[0][1] = i;
+                            winningCoordinates[1][0] = j + 1 + lengthOfCube - positionOnCube;
+                            winningCoordinates[1][1] = i + positionOnCube;
+                            winningCoordinates[2][0] = j + 1 + lengthOfCube - positionOnCube * 2;
+                            winningCoordinates[2][1] = i + 1 + lengthOfCube;
+                            winningCoordinates[3][0] = j - positionOnCube;
+                            winningCoordinates[3][1] = i + 1 + lengthOfCube - positionOnCube;
+
+                            String coordinatesDto = "("+Integer.toString(winningCoordinates[0][0])+"; "+Integer.toString(winningCoordinates[0][1])+
+                                    "), ("+Integer.toString(winningCoordinates[1][0])+"; "+Integer.toString(winningCoordinates[1][1])+
+                                    "), ("+Integer.toString(winningCoordinates[2][0])+"; "+Integer.toString(winningCoordinates[2][1])+
+                                    "), ("+Integer.toString(winningCoordinates[3][0])+"; "+Integer.toString(winningCoordinates[3][1])+")";
+
 
 
                             switch (side) {
                                 case BLACK -> {
-                                    return "b";
+                                    return "b "+coordinatesDto;
                                 }
                                 case WHITE -> {
-                                    return "w";
+                                    return "w "+coordinatesDto;
                                 }
                             }
                         }
