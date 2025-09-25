@@ -4,11 +4,16 @@ import com.square_game_server.domain.Cell;
 import com.square_game_server.domain.Side;
 import com.square_game_server.domain.SimpleMove;
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.stereotype.Service;
+
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.log;
 
 @Service
 @RequiredArgsConstructor
 public class CellServiceImpl implements CellService {
+
     @Override
     public String calculateWinner(Cell[][] board) {
         boolean isDraw = true;
@@ -18,32 +23,37 @@ public class CellServiceImpl implements CellService {
                 if (side == null) {
                     isDraw = false;
                 }
-                for (int lengthOfCube = 0; side != null
-                        && y1 + lengthOfCube < board.length
-                        && x1 + lengthOfCube < board.length; lengthOfCube++) {
-                    int positionOnCube = 0;
-                    int x2 = x1 + 1 + lengthOfCube - positionOnCube, y2 = y1 + positionOnCube;
-                    int x3 = x1 + 1 + lengthOfCube - positionOnCube * 2, y3 = y1 + 1 + lengthOfCube;
-                    int x4 = x1 - positionOnCube, y4 = y1 + 1 + lengthOfCube - positionOnCube;
+                for (int lengthOfSquare = 0; side != null
+                        && y1 + lengthOfSquare < board.length; lengthOfSquare++) {
 
 
 
-                    for (;
-                         positionOnCube <= lengthOfCube
-                            && y2 < board.length
-                            && x2 < board.length
-                            && y3 < board.length
-                            && x3 < board.length
-                            && x3 >= 0
-                            && y4 < board.length
-                            && x4 >= 0;
-                         positionOnCube++,
-                                 x2 = x1 + 1 + lengthOfCube - positionOnCube,
-                                 y2 = y1 + positionOnCube,
-                                 x3 = x1 + 1 + lengthOfCube - positionOnCube * 2,
-                                 y3 = y1 + 1 + lengthOfCube,
-                                 x4 = x1 - positionOnCube,
-                                 y4 = y1 + 1 + lengthOfCube - positionOnCube) {
+                    for (int positionOnSquare = 0,
+                         x2 = x1 + 1 + lengthOfSquare - positionOnSquare,
+                         y2 = y1 + positionOnSquare,
+                         x3 = x1 + 1 + lengthOfSquare, //x1 + 1 + lengthOfSquare - positionOnSquare * 2
+                         y3 = y1 + 1 + lengthOfSquare,
+                         x4 = x1 - positionOnSquare,
+                         y4 = y1 + 1 + lengthOfSquare - positionOnSquare;
+
+                         positionOnSquare <= lengthOfSquare
+                                 && y2 < board.length
+                                 && y3 < board.length
+                                 && x3 >= 0
+                                 && y4 < board.length
+                                 && x4 >= 0;
+
+                         positionOnSquare++,
+                                 x2 = x1 + 1 + lengthOfSquare - positionOnSquare,
+                                 y2 = y1 + positionOnSquare,
+                                 x3 = x1 + 1 + lengthOfSquare - positionOnSquare * 2,
+                                 y3 = y1 + 1 + lengthOfSquare,
+                                 x4 = x1 - positionOnSquare,
+                                 y4 = y1 + 1 + lengthOfSquare - positionOnSquare) {
+                        if(x3 >= board.length || x2 >= board.length){
+                            continue;
+                        }
+
 
 
                         if (board[y2][x2].getSide() == side
