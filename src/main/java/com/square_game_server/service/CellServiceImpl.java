@@ -12,50 +12,47 @@ public class CellServiceImpl implements CellService {
     @Override
     public String calculateWinner(Cell[][] board) {
         boolean isDraw = true;
-        for (int i = 0; i < board.length; i++) {
-            for (int j = 0; j < board[i].length; j++) {
-                Side side = board[i][j].getSide();
+        for (int y1 = 0; y1 < board.length; y1++) {
+            for (int x1 = 0; x1 < board[y1].length; x1++) {
+                Side side = board[y1][x1].getSide();
                 if (side == null) {
                     isDraw = false;
                 }
                 for (int lengthOfCube = 0; side != null
-                        && i + lengthOfCube < board.length
-                        && j + lengthOfCube < board.length; lengthOfCube++) {
+                        && y1 + lengthOfCube < board.length
+                        && x1 + lengthOfCube < board.length; lengthOfCube++) {
+                    int positionOnCube = 0;
+                    int x2 = x1 + 1 + lengthOfCube - positionOnCube, y2 = y1 + positionOnCube;
+                    int x3 = x1 + 1 + lengthOfCube - positionOnCube * 2, y3 = y1 + 1 + lengthOfCube;
+                    int x4 = x1 - positionOnCube, y4 = y1 + 1 + lengthOfCube - positionOnCube;
 
 
 
-                    for (int positionOnCube = 0; positionOnCube <= lengthOfCube
-                            && i + positionOnCube < board.length
-                            &&j + 1 + lengthOfCube - positionOnCube <board.length
-                            &&i + 1 + lengthOfCube <board.length
-                            &&j + 1 + lengthOfCube - positionOnCube * 2 < board.length
-                            && j + 1 + lengthOfCube - positionOnCube * 2 >= 0
-                            && i + 1 + lengthOfCube - positionOnCube <board.length
-                            && j - positionOnCube >= 0; positionOnCube++) {
+                    for (;
+                         positionOnCube <= lengthOfCube
+                            && y2 < board.length
+                            && x2 < board.length
+                            && y3 < board.length
+                            && x3 < board.length
+                            && x3 >= 0
+                            && y4 < board.length
+                            && x4 >= 0;
+                         positionOnCube++,
+                                 x2 = x1 + 1 + lengthOfCube - positionOnCube,
+                                 y2 = y1 + positionOnCube,
+                                 x3 = x1 + 1 + lengthOfCube - positionOnCube * 2,
+                                 y3 = y1 + 1 + lengthOfCube,
+                                 x4 = x1 - positionOnCube,
+                                 y4 = y1 + 1 + lengthOfCube - positionOnCube) {
 
 
-
-                        if (board[i + positionOnCube][j + 1 + lengthOfCube - positionOnCube].getSide() == side
-                                && board[i + 1 + lengthOfCube][j + 1 + lengthOfCube - positionOnCube * 2].getSide() == side
-                                && board[i + 1 + lengthOfCube - positionOnCube][j - positionOnCube].getSide() == side) {
-
-                           int[][] winningCoordinates = new int[4][2];
-                            winningCoordinates[0][0] = j;
-                            winningCoordinates[0][1] = i;
-                            winningCoordinates[1][0] = j + 1 + lengthOfCube - positionOnCube;
-                            winningCoordinates[1][1] = i + positionOnCube;
-                            winningCoordinates[2][0] = j + 1 + lengthOfCube - positionOnCube * 2;
-                            winningCoordinates[2][1] = i + 1 + lengthOfCube;
-                            winningCoordinates[3][0] = j - positionOnCube;
-                            winningCoordinates[3][1] = i + 1 + lengthOfCube - positionOnCube;
-
-                            String coordinatesDto = "("+Integer.toString(winningCoordinates[0][0])+"; "+Integer.toString(winningCoordinates[0][1])+
-                                    "), ("+Integer.toString(winningCoordinates[1][0])+"; "+Integer.toString(winningCoordinates[1][1])+
-                                    "), ("+Integer.toString(winningCoordinates[2][0])+"; "+Integer.toString(winningCoordinates[2][1])+
-                                    "), ("+Integer.toString(winningCoordinates[3][0])+"; "+Integer.toString(winningCoordinates[3][1])+")";
-
-
-
+                        if (board[y2][x2].getSide() == side
+                                && board[y3][x3].getSide() == side
+                                && board[y4][x4].getSide() == side) {
+                            String coordinatesDto = "("+ x1 +"; "+ y1 +
+                                    "), ("+ x2 +"; "+ y2 +
+                                    "), ("+ x3 +"; "+ y3 +
+                                    "), ("+ x4 +"; "+ y4 +")";
 
                             switch (side) {
                                 case BLACK -> {
@@ -66,8 +63,6 @@ public class CellServiceImpl implements CellService {
                                 }
                             }
                         }
-
-
                     }
 
 
