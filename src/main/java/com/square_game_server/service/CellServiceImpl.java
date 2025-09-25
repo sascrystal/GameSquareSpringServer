@@ -12,8 +12,8 @@ public class CellServiceImpl implements CellService {
     @Override
     public String calculateWinner(Cell[][] board) {
         boolean isDraw = true;
-        for (int i = 0; i < board.length - 1; i++) {
-            for (int j = 0; j < board[i].length - 1; j++) {
+        for (int i = 0; i < board.length; i++) {
+            for (int j = 0; j < board[i].length; j++) {
                 Side side = board[i][j].getSide();
                 if (side == null) {
                     isDraw = false;
@@ -23,22 +23,23 @@ public class CellServiceImpl implements CellService {
                         && j + lengthOfCube < board.length; lengthOfCube++) {
 
 
+
                     for (int positionOnCube = 0; positionOnCube <= lengthOfCube
                             && i + positionOnCube < board.length
-                            && j + 1 + lengthOfCube - positionOnCube < board.length
-                            && j + 1 + lengthOfCube - positionOnCube >= 0
-                            && i + 1 + lengthOfCube < board.length
-                            && j + 1 - lengthOfCube - positionOnCube < board.length
-                            && j + 1 - lengthOfCube - positionOnCube >= 0
-                            && i + 1 + lengthOfCube - positionOnCube < board.length
-                            && i + 1 + lengthOfCube - positionOnCube >= 0
+                            &&j + 1 + lengthOfCube - positionOnCube <board.length
+                            &&i + 1 + lengthOfCube <board.length
+                            &&j + 1 + lengthOfCube - positionOnCube * 2 < board.length
+                            && j + 1 + lengthOfCube - positionOnCube * 2 >= 0
+                            && i + 1 + lengthOfCube - positionOnCube <board.length
                             && j - positionOnCube >= 0; positionOnCube++) {
+
+
 
                         if (board[i + positionOnCube][j + 1 + lengthOfCube - positionOnCube].getSide() == side
                                 && board[i + 1 + lengthOfCube][j + 1 + lengthOfCube - positionOnCube * 2].getSide() == side
                                 && board[i + 1 + lengthOfCube - positionOnCube][j - positionOnCube].getSide() == side) {
 
-                            int[][] winningCoordinates = new int[4][2];
+                           int[][] winningCoordinates = new int[4][2];
                             winningCoordinates[0][0] = j;
                             winningCoordinates[0][1] = i;
                             winningCoordinates[1][0] = j + 1 + lengthOfCube - positionOnCube;
@@ -55,6 +56,7 @@ public class CellServiceImpl implements CellService {
 
 
 
+
                             switch (side) {
                                 case BLACK -> {
                                     return "b "+coordinatesDto;
@@ -64,6 +66,7 @@ public class CellServiceImpl implements CellService {
                                 }
                             }
                         }
+
 
                     }
 

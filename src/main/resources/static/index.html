@@ -1,9 +1,9 @@
     <!DOCTYPE html>
-<html lang="ru">
+    <html lang="ru" xmlns="http://www.w3.org/1999/html">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Шахматная доска с серверным взаимодействием</title>
+    <title>Игра "Квадраты"</title>
     <style>
 
         .win-line {
@@ -353,7 +353,7 @@
 </head>
 <body>
     <header>
-        <h1>Шахматная доска с серверным взаимодействием</h1>
+        <h1>Игра квадраты </h1>
         <p>Вы играете за белых, сервер играет за черных</p>
     </header>
 
@@ -366,6 +366,7 @@
             </div>
             <button id="resetBoard">Очистить доску</button>
             <button id="toggleNumbers">Переключить номера</button>
+            <button id="changeColor">Поменять цвет</button>
         </div>
 
         <div class="board-container">
@@ -383,14 +384,7 @@
             <div class="server-status" id="serverStatus"></div>
         </div>
 
-        <div class="instructions">
-            <h3>Как использовать:</h3>
-            <p>• Кликните на клетку, чтобы разместить белую фишку (ваш ход)</p>
-            <p>• После вашего хода автоматически отправляется запрос на сервер</p>
-            <p>• Сервер отвечает ходом черных, который отображается на доске</p>
-            <p>• Измените размер доски с помощью поля ввода</p>
-            <p>• Используйте кнопку "Очистить доску" для сброса всех фишек</p>
-        </div>
+
     </div>
 
     <script>
@@ -400,6 +394,7 @@
             const resizeBoardBtn = document.getElementById('resizeBoard');
             const resetBoardBtn = document.getElementById('resetBoard');
             const toggleNumbersBtn = document.getElementById('toggleNumbers');
+            const changeColor = document.getElementById("changeColor")
             const currentPlayerIndicator = document.querySelector('.current-player');
             const serverStatus = document.getElementById('serverStatus');
 
@@ -410,6 +405,7 @@
             let showNumbers = true;
             let boardState = []; // Массив для хранения состояния доски
             let isWaitingForServer = false;
+            let playerColor = "white";
 
             // URL сервера для отправки ходов
             const SERVER_URL = 'http://localhost:8080'; // Заглушка для демонстрации
