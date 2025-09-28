@@ -25,9 +25,6 @@ public class CellServiceImpl implements CellService {
                 }
                 for (int lengthOfSquare = 0; side != null
                         && y1 + lengthOfSquare < board.length; lengthOfSquare++) {
-
-
-
                     for (int positionOnSquare = 0,
                          x2 = x1 + 1 + lengthOfSquare - positionOnSquare,
                          y2 = y1 + positionOnSquare,
@@ -53,8 +50,6 @@ public class CellServiceImpl implements CellService {
                         if(x3 >= board.length || x2 >= board.length){
                             continue;
                         }
-
-
 
                         if (board[y2][x2].getSide() == side
                                 && board[y3][x3].getSide() == side
