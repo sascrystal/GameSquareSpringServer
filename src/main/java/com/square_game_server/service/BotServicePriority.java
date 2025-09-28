@@ -1,5 +1,6 @@
 package com.square_game_server.service;
 
+import com.square_game_server.config.BotPriorityConfig;
 import com.square_game_server.domain.Board;
 import com.square_game_server.domain.Cell;
 import com.square_game_server.domain.Side;
@@ -13,12 +14,7 @@ import java.util.Random;
 @Service
 @AllArgsConstructor
 public class BotServicePriority implements BotService {
-    private final static int GIVE_POINTS_FOR_0_FRIENDLY_PIECE = 5;
-    private final static int GIVE_POINTS_FOR_1_FRIENDLY_PIECE = 20;
-    private final static int GIVE_POINTS_FOR_2_FRIENDLY_PIECE = 40;
-    private final static int GIVE_POINTS_FOR_0_ENEMY_PIECE = 3;
-    private final static int GIVE_POINTS_FOR_1_ENEMY_PIECE = 15;
-    private final static int GIVE_POINTS_FOR_2_ENEMY_PIECE = 55;
+    private final BotPriorityConfig config;
 
 
     @Override
@@ -49,7 +45,6 @@ public class BotServicePriority implements BotService {
                         if (potentialCombination[2][0] >= board.getData().length || potentialCombination[1][0] >= board.getData().length) {
                             continue;
                         }
-                        System.out.println("GOAL");
                         int countFriendlyPieces = countPiecesOfSide(potentialCombination, board, board.getNextPlayerColor());
                         int countEnemyPieces = countPiecesOfSide(potentialCombination, board, enemySide);
                         if (countFriendlyPieces == 3 || countEnemyPieces == 3) {
@@ -61,18 +56,18 @@ public class BotServicePriority implements BotService {
                         }
                         if (countEnemyPieces == 0) {
                             int givingPoints = switch (countFriendlyPieces) {
-                                case 0 -> GIVE_POINTS_FOR_0_FRIENDLY_PIECE;
-                                case 1 -> GIVE_POINTS_FOR_1_FRIENDLY_PIECE;
-                                case 2 -> GIVE_POINTS_FOR_2_FRIENDLY_PIECE;
+                                case 0 -> config.getPointsForFriendlyPiece0();
+                                case 1 -> config.getPointsForFriendlyPiece1();
+                                case 2 -> config.getPointsForFriendlyPiece2();
                                 default -> 0;
                             };
                             cellsPriority[y1][x1] += givingPoints;
                         }
                         if (countFriendlyPieces == 0) {
                             int givingPoints = switch (countEnemyPieces) {
-                                case 0 -> GIVE_POINTS_FOR_0_ENEMY_PIECE;
-                                case 1 -> GIVE_POINTS_FOR_1_ENEMY_PIECE;
-                                case 2 -> GIVE_POINTS_FOR_2_ENEMY_PIECE;
+                                case 0 -> config.getPointsForEnemyPiece0();
+                                case 1 -> config.getPointsForEnemyPiece1();
+                                case 2 -> config.getPointsForEnemyPiece2();
                                 default -> 0;
                             };
                             cellsPriority[y1][x1] += givingPoints;
