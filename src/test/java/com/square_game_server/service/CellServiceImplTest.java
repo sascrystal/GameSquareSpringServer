@@ -6,7 +6,6 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
@@ -17,7 +16,7 @@ public class CellServiceImplTest {
 
     @DisplayName("должен выявить победу")
     @Test
-    void  shouldCheckWinner(){
+    void shouldCheckWinner() {
         CellServiceImpl cellServiceImpl = new CellServiceImpl();
         Cell[][] board = new Cell[5][5];
         for (int i = 0; i < 5; i++) {
@@ -30,8 +29,8 @@ public class CellServiceImplTest {
         board[2][0].setSide(Side.WHITE);
         board[2][4].setSide(Side.WHITE);
         String string = cellServiceImpl.calculateWinner(board);
-        String answer = "w "+"("+ 2 +"; "+ 0 + "), " +
-                "("+ 4 +"; "+ 2 + "), ("+ 2 +"; "+ 4 + "), ("+ 0 +"; "+ 2 +")";
+        String answer = "w " + "(" + 2 + "; " + 0 + "), " +
+                "(" + 4 + "; " + 2 + "), (" + 2 + "; " + 4 + "), (" + 0 + "; " + 2 + ")";
         assertThat(string).isEqualTo(answer);
 
     }

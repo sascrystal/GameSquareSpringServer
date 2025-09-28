@@ -13,21 +13,21 @@ public class BoardDto {
     private String data;
     private String nextPlayerColor;
 
-    public static Board boardDtoToDomainObject(BoardDto boardDto){
+    public static Board boardDtoToDomainObject(BoardDto boardDto) {
         Cell[][] data = new Cell[boardDto.getSize()][boardDto.getSize()];
         int z = 0;
-        for(int i = 0; i < data.length; i++){
-            for(int j = 0; j < data[i].length; j++){
-                switch (boardDto.getData().charAt(z)){
+        for (int i = 0; i < data.length; i++) {
+            for (int j = 0; j < data[i].length; j++) {
+                switch (boardDto.getData().charAt(z)) {
                     case 'b':
                         data[i][j] = new Cell(Side.BLACK);
                         break;
-                        case 'w':
-                            data[i][j] = new Cell(Side.WHITE);
-                            break;
-                            case ' ':
-                                data[i][j] = new Cell();
-                                break;
+                    case 'w':
+                        data[i][j] = new Cell(Side.WHITE);
+                        break;
+                    case ' ':
+                        data[i][j] = new Cell();
+                        break;
                 }
                 z++;
             }
@@ -40,17 +40,18 @@ public class BoardDto {
         }
         return new Board(data, side);
     }
-    public static BoardDto domainObjectToBoardDto(Board domainObject){
+
+    public static BoardDto domainObjectToBoardDto(Board domainObject) {
         StringBuilder stringBuilder = new StringBuilder();
         for (Cell[] cells : domainObject.getData()) {
             for (Cell cell : cells) {
-                switch (cell.getSide()){
+                switch (cell.getSide()) {
                     case BLACK:
                         stringBuilder.append('b');
                         break;
-                        case WHITE:
-                            stringBuilder.append('w');
-                            break;
+                    case WHITE:
+                        stringBuilder.append('w');
+                        break;
                     default:
                         stringBuilder.append(' ');
                         break;
@@ -59,9 +60,9 @@ public class BoardDto {
             }
         }
         String nextPlayerColor;
-        if(domainObject.getNextPlayerColor() == Side.WHITE){
+        if (domainObject.getNextPlayerColor() == Side.WHITE) {
             nextPlayerColor = "w";
-        }else {
+        } else {
             nextPlayerColor = "b";
         }
 

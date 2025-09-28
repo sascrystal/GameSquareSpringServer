@@ -6,15 +6,16 @@ import com.square_game_server.domain.SimpleMove;
 import org.springframework.stereotype.Service;
 
 import java.util.Random;
+
 @Service
 public class BotRandom implements BotService {
     @Override
     public SimpleMove doMove(Board board) {
         Side enemySide;
-        if(board.getNextPlayerColor() == Side.WHITE) {
+        if (board.getNextPlayerColor() == Side.WHITE) {
             enemySide = Side.BLACK;
 
-        }else {
+        } else {
             enemySide = Side.WHITE;
         }
 
@@ -114,6 +115,6 @@ public class BotRandom implements BotService {
             row = rand.nextInt(board.getData().length);
             col = rand.nextInt(board.getData()[row].length);
         } while (board.getData()[col][row].getSide() != null);
-        return new SimpleMove(row,col,board.getNextPlayerColor());
+        return new SimpleMove(row, col, board.getNextPlayerColor());
     }
 }

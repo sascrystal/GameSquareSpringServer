@@ -6,7 +6,7 @@ bot:
     pointsForEnemyPiece0: 0
     pointsForEnemyPiece1: 10
     pointsForEnemyPiece2: 40
-    pointsForFriendlyPiece0 : 2
+    pointsForFriendlyPiece0: 2
     pointsForFriendlyPiece1: 15
     pointsForFriendlyPiece2: 35
 

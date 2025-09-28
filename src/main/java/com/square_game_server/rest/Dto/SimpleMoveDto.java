@@ -13,13 +13,15 @@ public class SimpleMoveDto {
     private int x;
     private int y;
     private String color;
-    public static SimpleMove dtoToDomainObject(SimpleMoveDto simpleMoveDto){
+
+    public static SimpleMove dtoToDomainObject(SimpleMoveDto simpleMoveDto) {
         if (simpleMoveDto.getColor().equals("w")) {
             return new SimpleMove(simpleMoveDto.getX(), simpleMoveDto.getY(), Side.WHITE);
         }
         return new SimpleMove(simpleMoveDto.getX(), simpleMoveDto.getY(), Side.BLACK);
     }
-    public static SimpleMoveDto domainObjectToDto(SimpleMove simpleMove){
+
+    public static SimpleMoveDto domainObjectToDto(SimpleMove simpleMove) {
         if (Objects.requireNonNull(simpleMove.getSide()) == Side.WHITE) {
             return new SimpleMoveDto(simpleMove.getX(), simpleMove.getY(), "w");
         }
