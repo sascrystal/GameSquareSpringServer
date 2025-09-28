@@ -105,27 +105,6 @@ public class BotRandom implements BotService {
                         }
                     }
                 }
-                //TODO: сделать полноценный алгоритм нахождение поражения за два хода
-                if(board.getData()[y1][x1].getSide() == null
-                        && y1-1>=0
-                        && y1+1<board.getData().length
-                        &&board.getData()[y1+1][x1].getSide()== enemySide
-                        && board.getData()[y1-1][x1].getSide()== enemySide){
-                    return new SimpleMove(x1, y1, board.getNextPlayerColor());
-
-                }
-                if(board.getData()[y1][x1].getSide() == null
-                        && x1-1>=0
-                        && x1+1<board.getData().length
-                        &&board.getData()[y1][x1-1].getSide()== enemySide
-                        && board.getData()[y1][x1+1].getSide()== enemySide){
-                    return new SimpleMove(x1, y1, board.getNextPlayerColor());
-
-                }
-
-
-
-
             }
         }
         int row, col;

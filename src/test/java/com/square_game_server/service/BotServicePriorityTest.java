@@ -1,5 +1,6 @@
 package com.square_game_server.service;
 
+import com.square_game_server.config.BotPriorityConfig;
 import com.square_game_server.domain.Board;
 import com.square_game_server.domain.Cell;
 import com.square_game_server.domain.Side;
@@ -26,7 +27,7 @@ public class BotServicePriorityTest {
                 cells[i][j] = new Cell();}
 
         }
-        botServicePriority = new BotServicePriority();
+        botServicePriority = new BotServicePriority(new BotPriorityConfig());
         cells[0][0].setSide(Side.WHITE);
         cells[0][1].setSide(Side.WHITE);
         cells[1][0].setSide(Side.WHITE);

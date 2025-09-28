@@ -576,7 +576,7 @@
 
                 try {
                     // Отправляем GET запрос на сервер для проверки победы
-                    const response = await fetch(SERVER_URL + "/api/board/1/checkWin", {
+                    const response = await fetch(SERVER_URL + "/api/board/square/checkWin", {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json',
@@ -766,7 +766,7 @@
                 };
 
                 try {
-                    const response = await fetch(SERVER_URL + "/api/1/nextMove", {
+                    const response = await fetch(SERVER_URL + "/api/square/nextMove", {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json',

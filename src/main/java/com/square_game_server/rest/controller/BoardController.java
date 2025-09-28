@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.*;
 public class BoardController {
     private final CellService cellService;
 
-    @PostMapping("/api/board/1/checkWin")
+    @PostMapping("/api/board/square/checkWin")
     private String checkWinner(@RequestBody BoardDto boardDto) {
         Board board = BoardDto.boardDtoToDomainObject(boardDto);
         return cellService.calculateWinner(board.getData());
