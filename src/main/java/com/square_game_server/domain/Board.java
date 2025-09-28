@@ -8,6 +8,7 @@ import lombok.Data;
 public class Board {
     private Cell[][] data;
     private Side nextPlayerColor;
+
     public Cell getCell(int x, int y) {
         return data[y][x];
     }

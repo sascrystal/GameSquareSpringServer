@@ -2,7 +2,6 @@ package com.square_game_server.service;
 
 import com.square_game_server.config.BotPriorityConfig;
 import com.square_game_server.domain.Board;
-import com.square_game_server.domain.Cell;
 import com.square_game_server.domain.Side;
 import com.square_game_server.domain.SimpleMove;
 import lombok.AllArgsConstructor;
@@ -16,6 +15,33 @@ import java.util.Random;
 public class BotServicePriority implements BotService {
     private final BotPriorityConfig config;
 
+    private static ArrayList<int[]> findAllMaxIndexes(int[][] matrix) {
+        ArrayList<int[]> maxIndexes = new ArrayList<>();
+
+        if (matrix == null || matrix.length == 0) {
+            return maxIndexes;
+        }
+
+        int maxValue = matrix[0][0];
+
+        for (int i = 0; i < matrix.length; i++) {
+            for (int j = 0; j < matrix[i].length; j++) {
+                if (matrix[i][j] > maxValue) {
+                    maxValue = matrix[i][j];
+                }
+            }
+        }
+
+        for (int i = 0; i < matrix.length; i++) {
+            for (int j = 0; j < matrix[i].length; j++) {
+                if (matrix[i][j] == maxValue) {
+                    maxIndexes.add(new int[]{i, j});
+                }
+            }
+        }
+
+        return maxIndexes;
+    }
 
     @Override
     public SimpleMove doMove(Board board) {
@@ -102,34 +128,6 @@ public class BotServicePriority implements BotService {
             }
         }
         return count;
-    }
-
-    private static ArrayList<int[]> findAllMaxIndexes(int[][] matrix) {
-        ArrayList<int[]> maxIndexes = new ArrayList<>();
-
-        if (matrix == null || matrix.length == 0) {
-            return maxIndexes;
-        }
-
-        int maxValue = matrix[0][0];
-
-        for (int i = 0; i < matrix.length; i++) {
-            for (int j = 0; j < matrix[i].length; j++) {
-                if (matrix[i][j] > maxValue) {
-                    maxValue = matrix[i][j];
-                }
-            }
-        }
-
-        for (int i = 0; i < matrix.length; i++) {
-            for (int j = 0; j < matrix[i].length; j++) {
-                if (matrix[i][j] == maxValue) {
-                    maxIndexes.add(new int[]{i, j});
-                }
-            }
-        }
-
-        return maxIndexes;
     }
 }
 
