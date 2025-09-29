@@ -19,3 +19,8 @@ Spring java сервер для обработки запросов. Основ�
 
 # Как запустить?
 в release версии zip архив. Распаковать в любом удобном месте  и запустить start.bat либо командой java -jar server.jar . необходима java 21. Чтобы зайти на сайт нужно написать в браузере http://localhost:8080/index.html
+
+# Демонстрация работы
+## <img width="980" height="558" alt="image" src="https://github.com/user-attachments/assets/ac0acb10-0bc2-425c-a666-fdbedff63e81" />
+## <img width="1343" height="649" alt="image" src="https://github.com/user-attachments/assets/9f4e3a4d-a5d2-4fef-b268-2312f3c0fad6" />
+
